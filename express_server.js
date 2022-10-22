@@ -19,7 +19,8 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
-  const templateVars = { id: req.params.id, longURL: req.params.id }; // To Do longURL value?
+  const myID = req.params.id;
+  const templateVars = { id: myID, longURL: urlDatabase[myID] };
   res.render('urls_show', templateVars);
 });
 
