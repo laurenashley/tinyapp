@@ -27,10 +27,7 @@ app.get('/urls', (req, res) => {
 app.post('/urls', (req, res) => {
   const id = generateRandomString();
   console.log(req.body); // Log the POST request body to the console
-  urlDatabase[id] = req.body.longURL; // To Do WTH is the key here???
-  // res.send('Ok'); // Respond with 'Ok' (we will replace this)
-  console.log(urlDatabase);
-  // res.redirect(`/urls/${id}`);
+  urlDatabase[id] = req.body.longURL;
   res.redirect(`/urls/${id}`);
 });
 
