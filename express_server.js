@@ -17,12 +17,7 @@ const users = {
     id: 'userRandomID',
     email: 'user@example.com',
     password: 'purple-monkey-dinosaur',
-  },
-  user2RandomID: {
-    id: 'user2RandomID',
-    email: 'user2@example.com',
-    password: 'dishwasher-funk',
-  },
+  }
 };
 
 const generateRandomString = () => {
@@ -48,7 +43,8 @@ app.post('/logout', (req, res) => {
 
 app.get('/urls', (req, res) => {
   console.log('Cookies: ', req.cookies);
-  const templateVars = { urls: urlDatabase, username: req.cookies['username'] };
+  const myUser = users[req.cookies['user_id']];
+  const templateVars = { urls: urlDatabase, username: req.cookies['username'], user: myUser, email: myUser.email };
   res.render('urls_index', templateVars);
 });
 
@@ -68,7 +64,21 @@ app.post('/urls/:id/edit', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('user_registration');
+  const templateVars = { username: req.cookies['username'] };
+  res.render('user_registration', templateVars);
+});
+
+app.post('/register', (req, res) => {
+  const newUserID = generateRandomString();
+  const user = {
+    id: newUserID,
+    email: req.body.email,
+    password: req.body.password
+  };
+  users[newUserID] = user;
+  console.log(req.cookies);
+  res.cookie('user_id', newUserID);
+  res.redirect('/urls');
 });
 
 app.post('/urls/:id/delete', (req, res) => {
