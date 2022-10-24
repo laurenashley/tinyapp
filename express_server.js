@@ -22,21 +22,12 @@ app.get('/', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  // Cookies that have not been signed
-  console.log('Cookies: ', req.cookies);
-  // Cookies that have been signed
-  console.log('Signed Cookies: ', req.signedCookies);
-  console.log(req.body, res.cookie);
   const username = req.body.username;
   res.cookie('username', username); // To Do overwrite existing cookie or allow multiple?
   res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
-  // Cookies that have not been signed
-  console.log('Cookies: ', req.cookies);
-  // Cookies that have been signed
-  console.log('Signed Cookies: ', req.signedCookies);
   const username = req.body.username;
   res.clearCookie('username');
   res.redirect('/urls');
