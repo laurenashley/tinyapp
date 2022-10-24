@@ -30,41 +30,36 @@ app.get('/', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const username = req.body.username;
-  res.cookie('username', username); // To Do overwrite existing cookie or allow multiple?
-  res.redirect('/urls');
-});
-
-app.post('/logout', (req, res) => {
-  const username = req.body.username;
-  res.clearCookie('username');
+  const email = req.body.email;
+  console.log('email ', email);
+  // find user by email
+  res.cookie('user_id', email);
   res.redirect('/urls');
 });
 
 app.get('/urls', (req, res) => {
   console.log('Cookies: ', req.cookies);
-  const myUser = users[req.cookies['user_id']];
-  const templateVars = { urls: urlDatabase, username: req.cookies['username'], user: myUser, email: myUser.email };
+  const myUser = users[req.cookies.user_id];
+  console.log('myUser ', myUser);
+  const templateVars = {
+    urls: urlDatabase,
+    // username: req.cookies.username,
+    user: myUser
+  };
+  console.log('templateVars ', templateVars);
   res.render('urls_index', templateVars);
 });
 
-app.post('/urls', (req, res) => {
-  const id = generateRandomString();
-  // console.log(req.body); // Log the POST request body to the console
-  urlDatabase[id] = req.body.longURL;
-  res.redirect(`/urls/${id}`);
-});
-
-app.post('/urls/:id/edit', (req, res) => {
-  console.log(req.body);
-  const id = req.params.id;
-  urlDatabase[id] = req.body.newURL;
-  console.log(urlDatabase);
+app.post('/logout', (req, res) => {
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 
 app.get('/register', (req, res) => {
-  const templateVars = { username: req.cookies['username'] };
+  // console.log('cookies ', req.cookies);
+  const myUser = users[req.cookies.user_id];
+  // console.log('user ', myUser);
+  const templateVars = { user: myUser };
   res.render('user_registration', templateVars);
 });
 
@@ -76,8 +71,23 @@ app.post('/register', (req, res) => {
     password: req.body.password
   };
   users[newUserID] = user;
-  console.log(req.cookies);
+  // console.log(req.cookies);
   res.cookie('user_id', newUserID);
+  res.redirect('/urls');
+});
+
+app.post('/urls', (req, res) => {
+  const id = generateRandomString();
+  // console.log(req.body); // Log the POST request body to the console
+  urlDatabase[id] = req.body.longURL;
+  res.redirect(`/urls/${id}`);
+});
+
+app.post('/urls/:id/edit', (req, res) => {
+  // console.log(req.body);
+  const id = req.params.id;
+  urlDatabase[id] = req.body.newURL;
+  // console.log(urlDatabase);
   res.redirect('/urls');
 });
 
@@ -93,13 +103,18 @@ app.get('/u/:id', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const templateVars = { username: req.cookies['username']};
+  const myUser = users[req.cookies.user_id];
+  const templateVars = { user: myUser};
   res.render('urls_new', templateVars);
 });
 
 app.get('/urls/:id', (req, res) => {
   const myID = req.params.id;
-  const templateVars = { id: myID, longURL: urlDatabase[myID], username: req.cookies['username'] };
+  const templateVars = {
+    id: myID,
+    longURL: urlDatabase[myID],
+    username: req.cookies.username
+  };
   res.render('urls_show', templateVars);
 });
 
