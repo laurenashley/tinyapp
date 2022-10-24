@@ -11,8 +11,8 @@ const urlDatabase = {
 };
 
 const generateRandomString = () => {
-  const randomNum = Math.random().toString(20);
-  return randomNum.substring(2, 6);
+  const randomNum = Math.random().toString(20); // Specify radix, base to use for numeric vals
+  return randomNum.substring(2, 8);
 };
 
 app.get('/', (req, res) => {
@@ -25,8 +25,13 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
+  const id = generateRandomString();
   console.log(req.body); // Log the POST request body to the console
-  res.send('Ok'); // Respond with 'Ok' (we will replace this)
+  urlDatabase[id] = req.body.longURL; // To Do WTH is the key here???
+  // res.send('Ok'); // Respond with 'Ok' (we will replace this)
+  console.log(urlDatabase);
+  // res.redirect(`/urls/${id}`);
+  res.redirect(`/urls/${id}`);
 });
 
 app.get('/urls/new', (req, res) => {
