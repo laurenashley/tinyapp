@@ -39,6 +39,10 @@ app.post('/urls/:id/edit', (req, res) => {
   res.redirect('/urls');
 });
 
+app.get('/register', (req, res) => {
+  res.render('user_registration');
+});
+
 app.post('/urls/:id/delete', (req, res) => {
   const id = req.params.id;
   delete urlDatabase[id];
