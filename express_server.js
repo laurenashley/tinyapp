@@ -28,7 +28,7 @@ app.post('/login', (req, res) => {
   console.log('Signed Cookies: ', req.signedCookies);
   console.log(req.body, res.cookie); // Log the POST request body to the console
   const username = req.body.username;
-  res.cookie(username, username); // To Do overwrite existing cookie or allow multiple?
+  res.cookie('username', username); // To Do overwrite existing cookie or allow multiple?
   res.redirect('/urls');
 });
 
