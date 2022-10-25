@@ -52,7 +52,7 @@ app.post('/login', (req, res) => {
   if (myUser !== undefined) {
     // check password matches user password
     if (validatePassword(myUser, password)) {
-      res.cookie('userid', myUser);
+      res.cookie('userid', myUser.id);
       res.redirect('/urls');
     } else {
       res.sendStatus(403);
