@@ -7,12 +7,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const urlDatabase = { // To Do Remove this once switched to new obj
-  'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
-};
-
-const urlDatabase2 = {
+const urlDatabase = {
   'b2xVn2': {
     longURL: 'http://www.lighthouselabs.ca',
     userID: 'userRandomID'
@@ -130,7 +125,7 @@ app.post('/urls', (req, res) => {
     res.status(403).send(notLoggedInMessage);
   } else {
     const id = generateRandomString();
-    urlDatabase[id] = req.body.longURL;
+    urlDatabase[id] = { longURL: req.body.longURL };
     res.redirect(`/urls/${id}`);
   }
 });
@@ -138,7 +133,7 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:id/edit', (req, res) => {
   if (isLoggedIn(req)) {
     const id = req.params.id;
-    urlDatabase[id] = req.body.newURL;
+    urlDatabase[id] = { longURL: req.body.newURL };
     res.redirect('/urls');
   } else {
     res.status(403).send(notLoggedInMessage);
@@ -156,7 +151,7 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.get('/u/:id', (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id]['longURL'];
   res.redirect(longURL);
 });
 
@@ -170,9 +165,9 @@ app.get('/urls/new', (req, res) => {
   }
 });
 
-app.get('/urls/:id', (req, res) => {TO
+app.get('/urls/:id', (req, res) => {
   const myID = req.params.id;
-  const myURL = urlDatabase[myID];
+  const myURL = urlDatabase[myID]['longURL'];
   if (myURL) {
     const templateVars = {
       id: myID,
