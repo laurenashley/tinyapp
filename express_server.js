@@ -35,7 +35,7 @@ const isLoggedIn = (req) => {
   return req.cookies.userid;
 };
 
-const notLoggedInMessage = 'You must be registered and logged in to create a new short URL';
+const notLoggedInMessage = 'You must be registered and logged in to create a new short URL or to edit or delete them.';
 
 const generateRandomString = () => {
   const randomNum = Math.random().toString(20); // Specify radix, base to use for numeric vals
@@ -135,10 +135,13 @@ app.post('/urls/:id/edit', (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  // To Do only logged in user can do this
-  const id = req.params.id;
-  delete urlDatabase[id];
-  res.redirect('/urls');
+  if (isLoggedIn(req)) {
+    const id = req.params.id;
+    delete urlDatabase[id];
+    res.redirect('/urls');
+  } else {
+    res.status(403).send(notLoggedInMessage);
+  }
 });
 
 app.get('/u/:id', (req, res) => {
@@ -156,15 +159,19 @@ app.get('/urls/new', (req, res) => {
   }
 });
 
-app.get('/urls/:id', (req, res) => {
-  //To Do check for valid id
+app.get('/urls/:id', (req, res) => {TO
   const myID = req.params.id;
-  const templateVars = {
-    id: myID,
-    longURL: urlDatabase[myID],
-    user: users[req.cookies.userid]
-  };
-  res.render('urls_show', templateVars);
+  const myURL = urlDatabase[myID];
+  if (myURL) {
+    const templateVars = {
+      id: myID,
+      longURL: myURL,
+      user: users[req.cookies.userid]
+    };
+    res.render('urls_show', templateVars);
+  } else {
+    res.status(404).send('Short URL id not found');
+  }
 });
 
 app.get('/urls.json', (req, res) => {
