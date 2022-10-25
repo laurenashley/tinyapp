@@ -7,10 +7,21 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const urlDatabase = {
+const urlDatabase = { // To Do Remove this once switched to new obj
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
 };
+
+const urlDatabase2 = {
+  'b2xVn2': {
+    longURL: 'http://www.lighthouselabs.ca',
+    userID: 'userRandomID'
+  },
+  '9sm5xK': {
+    longURL: 'http://www.google.ca',
+    userID: 'userRandomID'
+  }
+}
 
 const users = {
   userRandomID: {
