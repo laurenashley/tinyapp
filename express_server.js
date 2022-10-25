@@ -66,16 +66,22 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  const newUserID = generateRandomString();
-  const user = {
-    id: newUserID,
-    email: req.body.email,
-    password: req.body.password
-  };
-  users[newUserID] = user;
-  // console.log(req.cookies);
-  res.cookie('userid', newUserID);
-  res.redirect('/urls');
+  const email = req.body.email;
+  const password = req.body.password;
+  const emailExists = getUserByEmail(email) !== undefined;
+  if (email !== '' && password !== '' && !emailExists) {
+    const newUserID = generateRandomString();
+    const user = {
+      id: newUserID,
+      email,
+      password
+    };
+    users[newUserID] = user;
+    res.cookie('userid', newUserID);
+    res.redirect('/urls');
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 app.post('/urls', (req, res) => {
