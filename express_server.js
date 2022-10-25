@@ -20,6 +20,13 @@ const users = {
   }
 };
 
+const getUserByEmail = (email) => {
+  const myUser = Object.values(users).filter((user) => {
+    return user.email === email
+  });
+  return myUser[0].id;
+};
+
 const generateRandomString = () => {
   const randomNum = Math.random().toString(20); // Specify radix, base to use for numeric vals
   return randomNum.substring(2, 8);
@@ -31,19 +38,16 @@ app.get('/', (req, res) => {
 
 app.post('/login', (req, res) => {
   const email = req.body.email;
-  console.log('email ', email);
-  // find user by email
-  res.cookie('user_id', email);
+  res.cookie('userid', getUserByEmail(email));
   res.redirect('/urls');
 });
 
 app.get('/urls', (req, res) => {
   console.log('Cookies: ', req.cookies);
-  const myUser = users[req.cookies.user_id];
-  console.log('myUser ', myUser);
+  const myUser = users[req.cookies.userid];
+  // console.log('myUser ', myUser);
   const templateVars = {
     urls: urlDatabase,
-    // username: req.cookies.username,
     user: myUser
   };
   console.log('templateVars ', templateVars);
@@ -51,14 +55,12 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  res.clearCookie('userid');
   res.redirect('/urls');
 });
 
 app.get('/register', (req, res) => {
-  // console.log('cookies ', req.cookies);
-  const myUser = users[req.cookies.user_id];
-  // console.log('user ', myUser);
+  const myUser = users[req.cookies.userid];
   const templateVars = { user: myUser };
   res.render('user_registration', templateVars);
 });
@@ -72,7 +74,7 @@ app.post('/register', (req, res) => {
   };
   users[newUserID] = user;
   // console.log(req.cookies);
-  res.cookie('user_id', newUserID);
+  res.cookie('userid', newUserID);
   res.redirect('/urls');
 });
 
@@ -103,7 +105,7 @@ app.get('/u/:id', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const myUser = users[req.cookies.user_id];
+  const myUser = users[req.cookies.userid];
   const templateVars = { user: myUser};
   res.render('urls_new', templateVars);
 });
