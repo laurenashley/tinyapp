@@ -135,7 +135,7 @@ app.get('/urls/:id', (req, res) => {
   const templateVars = {
     id: myID,
     longURL: urlDatabase[myID],
-    username: req.cookies.username
+    user: users[req.cookies.userid]
   };
   res.render('urls_show', templateVars);
 });
