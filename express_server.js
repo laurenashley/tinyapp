@@ -24,7 +24,7 @@ const getUserByEmail = (email) => {
   const myUser = Object.values(users).filter((user) => {
     return user.email === email
   });
-  return myUser[0].id;
+  return myUser.length === 0 ? undefined : myUser[0].id;
 };
 
 const generateRandomString = () => {
@@ -43,14 +43,11 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  console.log('Cookies: ', req.cookies);
   const myUser = users[req.cookies.userid];
-  // console.log('myUser ', myUser);
   const templateVars = {
     urls: urlDatabase,
     user: myUser
   };
-  console.log('templateVars ', templateVars);
   res.render('urls_index', templateVars);
 });
 
@@ -86,16 +83,13 @@ app.post('/register', (req, res) => {
 
 app.post('/urls', (req, res) => {
   const id = generateRandomString();
-  // console.log(req.body); // Log the POST request body to the console
   urlDatabase[id] = req.body.longURL;
   res.redirect(`/urls/${id}`);
 });
 
 app.post('/urls/:id/edit', (req, res) => {
-  // console.log(req.body);
   const id = req.params.id;
   urlDatabase[id] = req.body.newURL;
-  // console.log(urlDatabase);
   res.redirect('/urls');
 });
 
