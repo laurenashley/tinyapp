@@ -85,7 +85,6 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  // console.log('logged in: ', isLoggedIn(req))
   if (isLoggedIn(req)) {
     res.redirect('/urls');
   } else {
@@ -136,6 +135,7 @@ app.post('/urls/:id/edit', (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
+  // To Do only logged in user can do this
   const id = req.params.id;
   delete urlDatabase[id];
   res.redirect('/urls');
@@ -157,6 +157,7 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
+  //To Do check for valid id
   const myID = req.params.id;
   const templateVars = {
     id: myID,
