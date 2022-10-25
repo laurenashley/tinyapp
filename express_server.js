@@ -20,11 +20,15 @@ const users = {
   }
 };
 
-const getUserByEmail = (email) => {
+const getUserByEmail = (val) => {
   const myUser = Object.values(users).filter((user) => {
-    return user.email === email
+    return user.email === val
   });
-  return myUser.length === 0 ? undefined : myUser[0].id;
+  return myUser.length === 0 ? undefined : myUser[0];
+};
+
+const validatePassword = (user, val) => {
+  return user.password === val;
 };
 
 const generateRandomString = () => {
@@ -37,14 +41,25 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const templateVars = { user: 0 };
+  const templateVars = { user: undefined }; // To Do get rid of this, template breaks without it
   res.render('user_login', templateVars);
 });
 
 app.post('/login', (req, res) => {
   const email = req.body.email;
-  res.cookie('userid', getUserByEmail(email));
-  res.redirect('/urls');
+  const password = req.body.password;
+  const myUser = getUserByEmail(email);
+  if (myUser !== undefined) {
+    // check password matches user password
+    if (validatePassword(myUser, password)) {
+      res.cookie('userid', myUser);
+      res.redirect('/urls');
+    } else {
+      res.sendStatus(403);
+    }
+  } else {
+    res.sendStatus(403);
+  }
 });
 
 app.get('/urls', (req, res) => {
