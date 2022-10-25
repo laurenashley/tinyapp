@@ -109,7 +109,8 @@ app.post('/register', (req, res) => {
 app.post('/urls', (req, res) => {
   const cookieExists = req.cookies.userid;
   if (!cookieExists) {
-    // user not logged in , display HTML message
+    // user is not logged in, send message
+    res.status(403).send('You must be registered and logged in to create a new short URL');
   } else {
     const id = generateRandomString();
     urlDatabase[id] = req.body.longURL;
