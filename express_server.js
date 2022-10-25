@@ -107,9 +107,14 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  const id = generateRandomString();
-  urlDatabase[id] = req.body.longURL;
-  res.redirect(`/urls/${id}`);
+  const cookieExists = req.cookies.userid;
+  if (!cookieExists) {
+    // user not logged in , display HTML message
+  } else {
+    const id = generateRandomString();
+    urlDatabase[id] = req.body.longURL;
+    res.redirect(`/urls/${id}`);
+  }
 });
 
 app.post('/urls/:id/edit', (req, res) => {
