@@ -41,10 +41,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const userid = req.cookies.userid;
+  const cookieExists = req.cookies.userid;
   const templateVars = { user: undefined }; // To Do get rid of this, template breaks without it
 
-  userid ? res.redirect('/urls') : res.render('user_login', templateVars);
+  cookieExists ? res.redirect('/urls') : res.render('user_login', templateVars);
 });
 
 app.post('/login', (req, res) => {
@@ -85,6 +85,9 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
+  const cookieExists = req.cookies.userid;
+  cookieExists ? res.redirect('/urls') : res.render('user_login', templateVars);
+  
   const email = req.body.email;
   const password = req.body.password;
   const emailExists = getUserByEmail(email) !== undefined;
