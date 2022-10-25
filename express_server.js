@@ -31,6 +31,12 @@ const validatePassword = (user, val) => {
   return user.password === val;
 };
 
+const isLoggedIn = (req) => {
+  return req.cookies.userid;
+};
+
+const notLoggedInMessage = 'You must be registered and logged in to create a new short URL';
+
 const generateRandomString = () => {
   const randomNum = Math.random().toString(20); // Specify radix, base to use for numeric vals
   return randomNum.substring(2, 8);
@@ -41,10 +47,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const cookieExists = req.cookies.userid;
   const templateVars = { user: undefined }; // To Do get rid of this, template breaks without it
 
-  cookieExists ? res.redirect('/urls') : res.render('user_login', templateVars);
+  isLoggedIn(req) ? res.redirect('/urls') : res.render('user_login', templateVars);
 });
 
 app.post('/login', (req, res) => {
@@ -80,11 +85,14 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const cookieExists = req.cookies.userid;
-  const myUser = users[req.cookies.userid];
-  const templateVars = { user: myUser };
-
-  cookieExists ? res.redirect('/urls') : res.render('user_registration', templateVars);
+  // console.log('logged in: ', isLoggedIn(req))
+  if (isLoggedIn(req)) {
+    res.redirect('/urls');
+  } else {
+    const myUser = users[req.cookies.userid];
+    const templateVars = { user: myUser };
+    res.render('user_registration', templateVars);
+  }
 });
 
 app.post('/register', (req, res) => {
@@ -107,10 +115,9 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  const cookieExists = req.cookies.userid;
-  if (!cookieExists) {
+  if (!isLoggedIn(req)) {
     // user is not logged in, send message
-    res.status(403).send('You must be registered and logged in to create a new short URL');
+    res.status(403).send(notLoggedInMessage);
   } else {
     const id = generateRandomString();
     urlDatabase[id] = req.body.longURL;
@@ -119,9 +126,13 @@ app.post('/urls', (req, res) => {
 });
 
 app.post('/urls/:id/edit', (req, res) => {
-  const id = req.params.id;
-  urlDatabase[id] = req.body.newURL;
-  res.redirect('/urls');
+  if (isLoggedIn(req)) {
+    const id = req.params.id;
+    urlDatabase[id] = req.body.newURL;
+    res.redirect('/urls');
+  } else {
+    res.status(403).send(notLoggedInMessage);
+  }
 });
 
 app.post('/urls/:id/delete', (req, res) => {
@@ -136,10 +147,13 @@ app.get('/u/:id', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const myUser = users[req.cookies.userid];
-  const templateVars = { user: myUser};
-  // if not logged in , redirect to /login
-  myUser ? res.render('urls_new', templateVars) : res.redirect('/login');
+  if (isLoggedIn(req)) {
+    const myUser = users[req.cookies.userid];
+    const templateVars = { user: myUser};
+    res.render('urls_new', templateVars);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/urls/:id', (req, res) => {
