@@ -65,7 +65,8 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const myUser = users[req.cookies.userid];
+  const myid = req.cookies.userid;
+  const myUser = users[myid];
   const templateVars = {
     urls: urlDatabase,
     user: myUser
@@ -79,15 +80,14 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
+  const cookieExists = req.cookies.userid;
   const myUser = users[req.cookies.userid];
   const templateVars = { user: myUser };
-  res.render('user_registration', templateVars);
+
+  cookieExists ? res.redirect('/urls') : res.render('user_registration', templateVars);
 });
 
 app.post('/register', (req, res) => {
-  const cookieExists = req.cookies.userid;
-  cookieExists ? res.redirect('/urls') : res.render('user_login', templateVars);
-  
   const email = req.body.email;
   const password = req.body.password;
   const emailExists = getUserByEmail(email) !== undefined;
