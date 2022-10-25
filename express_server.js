@@ -36,6 +36,11 @@ app.get('/', (req, res) => {
   res.send('Hello!');
 });
 
+app.get('/login', (req, res) => {
+  const templateVars = { user: 0 };
+  res.render('user_login', templateVars);
+});
+
 app.post('/login', (req, res) => {
   const email = req.body.email;
   res.cookie('userid', getUserByEmail(email));
