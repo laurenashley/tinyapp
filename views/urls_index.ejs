@@ -20,15 +20,14 @@
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
+      <% if (user !== undefined) { %>
       <table class="table">
         <thead>
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
-            <% if (user !== undefined) { %>
             <th scope="col">Edit</th>
             <th scope="col">Delete</th>
-            <% } %>
           </tr>
         </thead>
         <tbody>
@@ -36,7 +35,6 @@
             <tr>
               <td><%= id %></td>
               <td><%= urls[id]['longURL'] %></td>
-              <% if (user !== undefined) { %>
               <td>
                 <form method="" action="/urls/<%= id %>">
                   <button type="submit">Edit</button>
@@ -47,13 +45,16 @@
                   <button type="submit">Delete</button>
                 </form>
               </td>
-              <% } %>
             </tr>
           <% } %>
         </tbody>
       </table>
-      <% if (user !== undefined) { %>
       <a href="/urls/new"">Add new short url</a>
+      <% } else { %>
+      <div class="table">
+        <h4>Please login to see your URLs</h4>
+        <p>Only logged in users can access this part of the website.</p>
+      </div>
       <% } %>
     </main>
     <!-- Bootstrap JS -->

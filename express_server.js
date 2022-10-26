@@ -15,6 +15,14 @@ const urlDatabase = {
   '9sm5xK': {
     longURL: 'http://www.google.ca',
     userID: 'userRandomID'
+  },
+  '9s34xK': {
+    longURL: 'http://www.google.ca',
+    userID: 'hcjb66'
+  },
+  '9s254K': {
+    longURL: 'http://www.google.ca',
+    userID: 'hcjb66'
   }
 }
 
@@ -23,6 +31,11 @@ const users = {
     id: 'userRandomID',
     email: 'user@example.com',
     password: 'purple-monkey-dinosaur',
+  }, 
+  hcjb66: {
+    id: 'hcjb66',
+    email: 'laurfaery@me.com',
+    password: '123',
   }
 };
 
@@ -39,6 +52,13 @@ const validatePassword = (user, val) => {
 
 const isLoggedIn = (req) => {
   return req.cookies.userid;
+};
+
+const urlsForUser = (id) => {
+  const myUrls = Object.values(urlDatabase).filter((val) => {
+    return val.userID === id
+  });
+  return myUrls;
 };
 
 const notLoggedInMessage = 'You must be registered and logged in to create a new short URL or to edit or delete them.';
@@ -79,7 +99,7 @@ app.get('/urls', (req, res) => {
   const myid = req.cookies.userid;
   const myUser = users[myid];
   const templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(myUser.id),
     user: myUser
   };
   res.render('urls_index', templateVars);
