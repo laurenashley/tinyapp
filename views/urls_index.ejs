@@ -33,8 +33,8 @@
         <tbody>
           <% for (let id in urls) { %>
             <tr>
-              <td><%= id %></td>
-              <td><%= urls[id]['longURL'] %></td>
+              <td><%= urls[id][0] %></td>
+              <td><%= urls[id][1]['longURL'] %></td>
               <td>
                 <form method="" action="/urls/<%= id %>">
                   <button type="submit">Edit</button>

@@ -17,11 +17,11 @@ const urlDatabase = {
     userID: 'userRandomID'
   },
   '9s34xK': {
-    longURL: 'http://www.google.ca',
+    longURL: 'http://www.hello.ca',
     userID: 'hcjb66'
   },
-  '9s254K': {
-    longURL: 'http://www.google.ca',
+  '85uu23': {
+    longURL: 'http://www.googler.ca',
     userID: 'hcjb66'
   }
 }
@@ -55,9 +55,14 @@ const isLoggedIn = (req) => {
 };
 
 const urlsForUser = (id) => {
-  const myUrls = Object.values(urlDatabase).filter((val) => {
-    return val.userID === id
-  });
+  const myUrls = [];
+  for (const obj of Object.entries(urlDatabase)) {
+    console.log('myUrls ', obj[1].longURL);
+    if (obj[1].userID === id) {
+      myUrls.push(obj);
+    }
+  }
+  console.log('myURLS ', myUrls);
   return myUrls;
 };
 
@@ -98,8 +103,9 @@ app.post('/login', (req, res) => {
 app.get('/urls', (req, res) => {
   const myid = req.cookies.userid;
   const myUser = users[myid];
+  const myUrls = myid ? urlsForUser(myUser.id) : undefined;
   const templateVars = {
-    urls: urlsForUser(myUser.id),
+    urls: myUrls,
     user: myUser
   };
   res.render('urls_index', templateVars);
