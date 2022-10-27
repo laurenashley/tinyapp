@@ -55,8 +55,10 @@ const isLoggedIn = (req) => {
 };
 
 const urlsForUser = (id) => {
+  console.log('urlDB ', urlDatabase);
+  const entries = Object.entries(urlDatabase);
   const myUrls = [];
-  for (const obj of Object.entries(urlDatabase)) {
+  for (const obj of entries) {
     console.log('myUrls ', obj[1].longURL);
     if (obj[1].userID === id) {
       myUrls.push(obj);
@@ -193,7 +195,7 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   const myID = req.params.id;
-  const myURL = urlDatabase[myID]['longURL'];
+  const myURL = urlDatabase[myID].longURL;
   if (myURL) {
     const templateVars = {
       id: myID,
