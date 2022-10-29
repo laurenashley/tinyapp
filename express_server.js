@@ -109,12 +109,11 @@ app.post('/login', (req, res) => {
 app.get('/urls', (req, res) => {
   const myid = req.cookies.userid;
   const myUser = users[myid];
-  console.log('112 myUrls: ', urlsForUser(myUser.id));
+  // console.log('112 myUrls: ', urlsForUser(myUser.id));
   const templateVars = {
-    urls: urlsForUser(myUser.id),
+    urls: isLoggedIn(req) ? urlsForUser(myUser.id) : urlDatabase, // Attn if anon user can view url list
     user: myUser
   };
-  console.log('vars urls ', templateVars.urls);
   res.render('urls_index', templateVars);
 });
 
