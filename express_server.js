@@ -55,16 +55,20 @@ const isLoggedIn = (req) => {
 };
 
 const urlsForUser = (id) => {
-  console.log('urlDB ', urlDatabase);
+  // To Do make sure all new urls are displayed; currently only hard-coded urls are showing
+  // console.log('urlDB ', urlDatabase, id);
   const entries = Object.entries(urlDatabase);
+  // console.log('entries ', entries);
   const myUrls = [];
+  // eslint-disable-next-line no-restricted-syntax
   for (const obj of entries) {
-    console.log('myUrls ', obj[1].longURL);
+    // console.log('myUserid ', obj[1].userID, id, obj[1].userID === id);
     if (obj[1].userID === id) {
+      // console.log('myObj ', obj);
       myUrls.push(obj);
     }
   }
-  console.log('myURLS ', myUrls);
+  // console.log('myURLS ', myUrls);
   return myUrls;
 };
 
@@ -105,11 +109,12 @@ app.post('/login', (req, res) => {
 app.get('/urls', (req, res) => {
   const myid = req.cookies.userid;
   const myUser = users[myid];
-  const myUrls = myid ? urlsForUser(myUser.id) : undefined;
+  console.log('112 myUrls: ', urlsForUser(myUser.id));
   const templateVars = {
-    urls: myUrls,
+    urls: urlsForUser(myUser.id),
     user: myUser
   };
+  console.log('vars urls ', templateVars.urls);
   res.render('urls_index', templateVars);
 });
 
@@ -153,15 +158,26 @@ app.post('/urls', (req, res) => {
     res.status(403).send(notLoggedInMessage);
   } else {
     const id = generateRandomString();
-    urlDatabase[id] = { longURL: req.body.longURL };
+    console.log('160 new url id ', id);
+    const newURL = {
+      longURL: req.body.longURL,
+      userID: req.cookies.userid
+    };
+    urlDatabase[id] = newURL;
+    console.log('165 newBD ', urlDatabase);
     res.redirect(`/urls/${id}`);
   }
 });
 
-app.post('/urls/:id/edit', (req, res) => {
+app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
   if (isLoggedIn(req)) {
     const id = req.params.id;
-    urlDatabase[id] = { longURL: req.body.newURL };
+    console.log('175 userID ', req.cookies.userid);
+    urlDatabase[id] = { 
+      longURL: req.body.newURL,
+      userID: req.cookies.userid
+    };
+    console.log('179 newBD ', urlDatabase);
     res.redirect('/urls');
   } else {
     res.status(403).send(notLoggedInMessage);

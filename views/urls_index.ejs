@@ -32,16 +32,18 @@
         </thead>
         <tbody>
           <% for (let id in urls) { %>
+            <% const url = urls[id]; %>
+            <% const urlID = urls[id][0]; %>
             <tr>
-              <td><%= urls[id][0] %></td>
-              <td><%= urls[id][1]['longURL'] %></td>
+              <td><%= urlID %></td>
+              <td><%= url[1]['longURL'] %></td>
               <td>
-                <form method="" action="/urls/<%= urls[id][0] %>">
+                <form method="" action="/urls/<%= urlID %>">
                   <button type="submit">Edit</button>
                 </form>
               </td>
               <td>
-                <form method="POST" action="/urls/<%= urls[id][0] %>/delete">
+                <form method="POST" action="/urls/<%= urlID %>/delete">
                   <button type="submit">Delete</button>
                 </form>
               </td>
