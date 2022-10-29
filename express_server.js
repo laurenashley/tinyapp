@@ -93,9 +93,11 @@ app.post('/login', (req, res) => {
       res.cookie('userid', myUser.id);
       res.redirect('/urls');
     } else {
+      // console.log('Not logged in Forbidden');
       res.sendStatus(403);
     }
   } else {
+    // console.log('Not logged in Forbidden');
     res.sendStatus(403);
   }
 });
@@ -141,6 +143,7 @@ app.post('/register', (req, res) => {
     res.cookie('userid', newUserID);
     res.redirect('/urls');
   } else {
+    // console.log('Not logged in Forbidden');
     res.sendStatus(404);
   }
 });
@@ -148,6 +151,7 @@ app.post('/register', (req, res) => {
 app.post('/urls', (req, res) => {
   if (!isLoggedIn(req)) {
     // user is not logged in, send message
+    // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   } else {
     const id = generateRandomString();
@@ -169,6 +173,7 @@ app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
     };
     res.redirect('/urls');
   } else {
+    // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
 });
@@ -179,13 +184,19 @@ app.post('/urls/:id/delete', (req, res) => {
     delete urlDatabase[id];
     res.redirect('/urls');
   } else {
+    // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
 });
 
 app.get('/u/:id', (req, res) => {
-  const longURL = urlDatabase[req.params.id]['longURL'];
-  res.redirect(longURL);
+  if (isLoggedIn(req)) {
+    const longURL = urlDatabase[req.params.id]['longURL'];
+    res.redirect(longURL);
+  } else {
+    // console.log('Not logged in');
+    res.status(403).send(notLoggedInMessage);
+  }
 });
 
 app.get('/urls/new', (req, res) => {
@@ -210,9 +221,11 @@ app.get('/urls/:id', (req, res) => {
       };
       res.render('urls_show', templateVars);
     } else {
+      // console.log('ID not found');
       res.status(404).send('Short URL id not found');
     }
   } else {
+    // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
 });
