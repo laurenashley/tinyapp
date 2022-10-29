@@ -55,20 +55,14 @@ const isLoggedIn = (req) => {
 };
 
 const urlsForUser = (id) => {
-  // To Do make sure all new urls are displayed; currently only hard-coded urls are showing
-  // console.log('urlDB ', urlDatabase, id);
   const entries = Object.entries(urlDatabase);
-  // console.log('entries ', entries);
   const myUrls = [];
   // eslint-disable-next-line no-restricted-syntax
   for (const obj of entries) {
-    // console.log('myUserid ', obj[1].userID, id, obj[1].userID === id);
     if (obj[1].userID === id) {
-      // console.log('myObj ', obj);
       myUrls.push(obj);
     }
   }
-  // console.log('myURLS ', myUrls);
   return myUrls;
 };
 
@@ -109,9 +103,9 @@ app.post('/login', (req, res) => {
 app.get('/urls', (req, res) => {
   const myid = req.cookies.userid;
   const myUser = users[myid];
-  // console.log('112 myUrls: ', urlsForUser(myUser.id));
+  const myDB = isLoggedIn(req) ? urlsForUser(myUser.id) : urlDatabase;
   const templateVars = {
-    urls: isLoggedIn(req) ? urlsForUser(myUser.id) : urlDatabase, // Attn if anon user can view url list
+    urls: myDB, // Attn if anon user can view url list see const ln 112
     user: myUser
   };
   res.render('urls_index', templateVars);
@@ -157,13 +151,11 @@ app.post('/urls', (req, res) => {
     res.status(403).send(notLoggedInMessage);
   } else {
     const id = generateRandomString();
-    console.log('160 new url id ', id);
     const newURL = {
       longURL: req.body.longURL,
       userID: req.cookies.userid
     };
     urlDatabase[id] = newURL;
-    console.log('165 newBD ', urlDatabase);
     res.redirect(`/urls/${id}`);
   }
 });
@@ -171,12 +163,10 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
   if (isLoggedIn(req)) {
     const id = req.params.id;
-    console.log('175 userID ', req.cookies.userid);
     urlDatabase[id] = { 
       longURL: req.body.newURL,
       userID: req.cookies.userid
     };
-    console.log('179 newBD ', urlDatabase);
     res.redirect('/urls');
   } else {
     res.status(403).send(notLoggedInMessage);
@@ -210,16 +200,20 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   const myID = req.params.id;
-  const myURL = urlDatabase[myID].longURL;
-  if (myURL) {
-    const templateVars = {
-      id: myID,
-      longURL: myURL,
-      user: users[req.cookies.userid]
-    };
-    res.render('urls_show', templateVars);
+  if (isLoggedIn(req)) {
+    if (urlDatabase[myID] !== undefined) {
+      const myURL = urlDatabase[myID].longURL;
+      const templateVars = {
+        id: myID,
+        longURL: myURL,
+        user: users[req.cookies.userid]
+      };
+      res.render('urls_show', templateVars);
+    } else {
+      res.status(404).send('Short URL id not found');
+    }
   } else {
-    res.status(404).send('Short URL id not found');
+    res.status(403).send(notLoggedInMessage);
   }
 });
 
