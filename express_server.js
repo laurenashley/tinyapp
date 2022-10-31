@@ -8,7 +8,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: 'session',
-  keys: []
+  keys: ['your-secret-key-goes-here', 'your-secret-key-goes-here']
 }));
 
 const urlDatabase = {
@@ -59,7 +59,7 @@ const validatePassword = (user, hashedPassword) => {
 };
 
 const isLoggedIn = (req) => {
-  return req.cookies.user_id;
+  return req.session.user_id;
 };
 
 const urlsForUser = (id) => {
@@ -112,7 +112,7 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const myid = req.cookies.user_id;
+  const myid = req.session.user_id;
   const myUser = users[myid];
   const myDB = isLoggedIn(req) ? urlsForUser(myUser.id) : urlDatabase;
   const templateVars = {
@@ -132,7 +132,7 @@ app.get('/register', (req, res) => {
   if (isLoggedIn(req)) {
     res.redirect('/urls');
   } else {
-    const myUser = users[req.cookies.user_id];
+    const myUser = users[req.session.user_id];
     const templateVars = { user: myUser };
     res.render('user_registration', templateVars);
   }
@@ -142,7 +142,7 @@ app.post('/register', (req, res) => {
   const hashedPassword = hashPassword(req.body.password);
   const email = req.body.email;
   const emailExists = getUserByEmail(email) !== undefined;
-  if (email !== '' && password !== '' && !emailExists) {
+  if (email !== '' && hashedPassword !== '' && !emailExists) {
     const newUserID = generateRandomString();
     const user = {
       id: newUserID,
@@ -151,7 +151,7 @@ app.post('/register', (req, res) => {
     };
     users[newUserID] = user;
     // res.cookie('userid', newUserID); replaced with next ln
-    req.cookies.user_id = newUserID;
+    req.session.user_id = newUserID;
     res.redirect('/urls');
   } else {
     // console.log('Not logged in Forbidden');
@@ -168,7 +168,7 @@ app.post('/urls', (req, res) => {
     const id = generateRandomString();
     const newURL = {
       longURL: req.body.longURL,
-      userID: req.cookies.user_id
+      userID: req.session.user_id
     };
     urlDatabase[id] = newURL;
     res.redirect(`/urls/${id}`);
@@ -180,7 +180,7 @@ app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
     const id = req.params.id;
     urlDatabase[id] = { 
       longURL: req.body.newURL,
-      userID: req.cookies.user_id
+      userID: req.session.user_id
     };
     res.redirect('/urls');
   } else {
@@ -212,7 +212,7 @@ app.get('/u/:id', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   if (isLoggedIn(req)) {
-    const myUser = users[req.cookies.user_id];
+    const myUser = users[req.session.user_id];
     const templateVars = { user: myUser};
     res.render('urls_new', templateVars);
   } else {
@@ -228,7 +228,7 @@ app.get('/urls/:id', (req, res) => {
       const templateVars = {
         id: myID,
         longURL: myURL,
-        user: users[req.cookies.user_id]
+        user: users[req.session.user_id]
       };
       res.render('urls_show', templateVars);
     } else {
