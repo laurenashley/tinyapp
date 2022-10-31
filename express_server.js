@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -30,12 +31,12 @@ const users = {
   userRandomID: {
     id: 'userRandomID',
     email: 'user@example.com',
-    password: 'purple-monkey-dinosaur',
+    hashedPassword: 'purple-monkey-dinosaur',
   }, 
   hcjb66: {
     id: 'hcjb66',
     email: 'laurfaery@me.com',
-    password: '123',
+    hashedPassword: '123',
   }
 };
 
@@ -46,8 +47,12 @@ const getUserByEmail = (val) => {
   return myUser.length === 0 ? undefined : myUser[0];
 };
 
-const validatePassword = (user, val) => {
-  return user.password === val;
+const hashPassword = (password) => {
+  return bcrypt.hashSync(password, 10);
+}
+
+const validatePassword = (user, hashedPassword) => {
+  return bcrypt.compareSync(user['hashedPassword'], hashedPassword);
 };
 
 const isLoggedIn = (req) => {
@@ -85,11 +90,11 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   const email = req.body.email;
-  const password = req.body.password;
+  const hashedPassword = hashPassword(req.body.password);
   const myUser = getUserByEmail(email);
   if (myUser !== undefined) {
     // check password matches user password
-    if (validatePassword(myUser, password)) {
+    if (validatePassword(myUser, hashedPassword)) {
       res.cookie('userid', myUser.id);
       res.redirect('/urls');
     } else {
@@ -129,22 +134,15 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  const bcrypt = require('bcryptjs');
-  const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
+  const hashedPassword = hashPassword(req.body.password);
   const email = req.body.email;
   const emailExists = getUserByEmail(email) !== undefined;
-
-  // console.log(bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword)); // returns true
-  // console.log(bcrypt.compareSync("pink-donkey-minotaur", hashedPassword)); // returns false
-  // console.log(hashedPassword, bcrypt.hashSync("purple-monkey-dinosaur"), bcrypt.hashSync("purple-monkey-dinosaur") === hashedPassword);
-
   if (email !== '' && password !== '' && !emailExists) {
     const newUserID = generateRandomString();
     const user = {
       id: newUserID,
       email,
-      password
+      hashedPassword
     };
     users[newUserID] = user;
     res.cookie('userid', newUserID);
