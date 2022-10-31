@@ -129,9 +129,16 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  const email = req.body.email;
+  const bcrypt = require('bcryptjs');
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  const email = req.body.email;
   const emailExists = getUserByEmail(email) !== undefined;
+
+  // console.log(bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword)); // returns true
+  // console.log(bcrypt.compareSync("pink-donkey-minotaur", hashedPassword)); // returns false
+  // console.log(hashedPassword, bcrypt.hashSync("purple-monkey-dinosaur"), bcrypt.hashSync("purple-monkey-dinosaur") === hashedPassword);
+
   if (email !== '' && password !== '' && !emailExists) {
     const newUserID = generateRandomString();
     const user = {
