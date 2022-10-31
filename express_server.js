@@ -1,12 +1,15 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080; // default port 8080
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: []
+}));
 
 const urlDatabase = {
   'b2xVn2': {
@@ -56,7 +59,7 @@ const validatePassword = (user, hashedPassword) => {
 };
 
 const isLoggedIn = (req) => {
-  return req.cookies.userid;
+  return req.cookies.user_id;
 };
 
 const urlsForUser = (id) => {
@@ -95,7 +98,8 @@ app.post('/login', (req, res) => {
   if (myUser !== undefined) {
     // check password matches user password
     if (validatePassword(myUser, hashedPassword)) {
-      res.cookie('userid', myUser.id);
+      // res.cookie('userid', myUser.id); replaced with nexy ln
+      req.session.user_id = myUser.id;
       res.redirect('/urls');
     } else {
       // console.log('Not logged in Forbidden');
@@ -108,7 +112,7 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const myid = req.cookies.userid;
+  const myid = req.cookies.user_id;
   const myUser = users[myid];
   const myDB = isLoggedIn(req) ? urlsForUser(myUser.id) : urlDatabase;
   const templateVars = {
@@ -119,7 +123,8 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('userid');
+  // res.clearCookie('userid'); replaced with next ln
+  req.session = null;
   res.redirect('/urls');
 });
 
@@ -127,7 +132,7 @@ app.get('/register', (req, res) => {
   if (isLoggedIn(req)) {
     res.redirect('/urls');
   } else {
-    const myUser = users[req.cookies.userid];
+    const myUser = users[req.cookies.user_id];
     const templateVars = { user: myUser };
     res.render('user_registration', templateVars);
   }
@@ -145,7 +150,8 @@ app.post('/register', (req, res) => {
       hashedPassword
     };
     users[newUserID] = user;
-    res.cookie('userid', newUserID);
+    // res.cookie('userid', newUserID); replaced with next ln
+    req.cookies.user_id = newUserID;
     res.redirect('/urls');
   } else {
     // console.log('Not logged in Forbidden');
@@ -162,7 +168,7 @@ app.post('/urls', (req, res) => {
     const id = generateRandomString();
     const newURL = {
       longURL: req.body.longURL,
-      userID: req.cookies.userid
+      userID: req.cookies.user_id
     };
     urlDatabase[id] = newURL;
     res.redirect(`/urls/${id}`);
@@ -174,7 +180,7 @@ app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
     const id = req.params.id;
     urlDatabase[id] = { 
       longURL: req.body.newURL,
-      userID: req.cookies.userid
+      userID: req.cookies.user_id
     };
     res.redirect('/urls');
   } else {
@@ -206,7 +212,7 @@ app.get('/u/:id', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   if (isLoggedIn(req)) {
-    const myUser = users[req.cookies.userid];
+    const myUser = users[req.cookies.user_id];
     const templateVars = { user: myUser};
     res.render('urls_new', templateVars);
   } else {
@@ -222,7 +228,7 @@ app.get('/urls/:id', (req, res) => {
       const templateVars = {
         id: myID,
         longURL: myURL,
-        user: users[req.cookies.userid]
+        user: users[req.cookies.user_id]
       };
       res.render('urls_show', templateVars);
     } else {
