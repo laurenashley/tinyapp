@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080; // default port 8080
 
+const helpers = require('./helpers');
+
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieSession({
@@ -41,13 +43,6 @@ const users = {
     email: 'laurfaery@me.com',
     hashedPassword: '123',
   }
-};
-
-const getUserByEmail = (val) => {
-  const myUser = Object.values(users).filter((user) => {
-    return user.email === val
-  });
-  return myUser.length === 0 ? undefined : myUser[0];
 };
 
 const hashPassword = (password) => {
@@ -94,7 +89,7 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const hashedPassword = hashPassword(req.body.password);
-  const myUser = getUserByEmail(email);
+  const myUser = helpers.getUserByEmail(email, users);
   if (myUser !== undefined) {
     // check password matches user password
     if (validatePassword(myUser, hashedPassword)) {
@@ -141,7 +136,7 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   const hashedPassword = hashPassword(req.body.password);
   const email = req.body.email;
-  const emailExists = getUserByEmail(email) !== undefined;
+  const emailExists = helpers.getUserByEmail(email, users) !== undefined;
   if (email !== '' && hashedPassword !== '' && !emailExists) {
     const newUserID = generateRandomString();
     const user = {
