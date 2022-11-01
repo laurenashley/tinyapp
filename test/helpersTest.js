@@ -1,13 +1,7 @@
 /* eslint-disable quote-props */
 const { assert } = require('chai');
 
-const {
-  isLoggedIn,
-  getUserByEmail,
-  hashPassword,
-  validatePassword,
-  generateRandomString
-} = require('../helpers');
+const { isLoggedIn, getUserByEmail } = require('../helpers');
 
 const testUsers = {
   'userRandomID': {
