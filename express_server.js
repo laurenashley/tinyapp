@@ -121,7 +121,7 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   const hashedPassword = hashPassword(req.body.password);
-  const email = req.body.email;
+  const { email } = req.body;
   const emailExists = getUserByEmail(email, users) !== undefined;
   if (email !== '' && hashedPassword !== '' && !emailExists) {
     const newUserID = generateRandomString();
@@ -157,7 +157,7 @@ app.post('/urls', (req, res) => {
 
 app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
   if (isLoggedIn(req)) {
-    const id = req.params.id;
+    const { id } = req.params;
     urlDatabase[id] = { 
       longURL: req.body.newURL,
       userID: req.session.user_id
@@ -171,7 +171,7 @@ app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
 
 app.post('/urls/:id/delete', (req, res) => {
   if (isLoggedIn(req)) {
-    const id = req.params.id;
+    const { id } = req.params;
     delete urlDatabase[id];
     res.redirect('/urls');
   } else {
@@ -182,7 +182,7 @@ app.post('/urls/:id/delete', (req, res) => {
 
 app.get('/u/:id', (req, res) => {
   if (isLoggedIn(req)) {
-    const longURL = urlDatabase[req.params.id]['longURL'];
+    const { longURL } = urlDatabase[req.params.id];
     res.redirect(longURL);
   } else {
     // console.log('Not logged in');
