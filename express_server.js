@@ -1,10 +1,9 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
-const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080; // default port 8080
 
-const { getUserByEmail } = require('./helpers');
+const { getUserByEmail, hashPassword, validatePassword, generateRandomString } = require('./helpers');
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -45,14 +44,6 @@ const users = {
   }
 };
 
-const hashPassword = (password) => {
-  return bcrypt.hashSync(password, 10);
-}
-
-const validatePassword = (user, hashedPassword) => {
-  return bcrypt.compareSync(user['hashedPassword'], hashedPassword);
-};
-
 const isLoggedIn = (req) => {
   return req.session.user_id;
 };
@@ -70,11 +61,6 @@ const urlsForUser = (id) => {
 };
 
 const notLoggedInMessage = 'You must be registered and logged in to create a new short URL or to edit or delete them.';
-
-const generateRandomString = () => {
-  const randomNum = Math.random().toString(20); // Specify radix, base to use for numeric vals
-  return randomNum.substring(2, 8);
-};
 
 app.get('/', (req, res) => {
   res.send('Hello!');
