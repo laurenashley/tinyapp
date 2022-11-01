@@ -73,7 +73,7 @@ app.get('/login', (req, res) => {
 
   isLoggedIn(req) ? res.redirect('/urls') : res.render('user_login', templateVars);
 });
-
+// Endpoint to login user using their email and password
 app.post('/login', (req, res) => {
   const { email } = req.body;
   const hashedPassword = hashPassword(req.body.password);
@@ -104,6 +104,7 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+// Endpoint to logout user
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/urls');
@@ -119,6 +120,7 @@ app.get('/register', (req, res) => {
   }
 });
 
+// Endpoint to register user using their email and password
 app.post('/register', (req, res) => {
   const hashedPassword = hashPassword(req.body.password);
   const { email } = req.body;
@@ -139,6 +141,7 @@ app.post('/register', (req, res) => {
   }
 });
 
+// Endpoint to create new short url using entered long url
 app.post('/urls', (req, res) => {
   if (!isLoggedIn(req)) {
     // user is not logged in, send message
@@ -155,6 +158,7 @@ app.post('/urls', (req, res) => {
   }
 });
 
+// Endpoint to update existing short url using new long url
 app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
   if (isLoggedIn(req)) {
     const { id } = req.params;
@@ -169,6 +173,7 @@ app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
   }
 });
 
+// Endpoint to delete existing url
 app.post('/urls/:id/delete', (req, res) => {
   if (isLoggedIn(req)) {
     const { id } = req.params;
