@@ -3,7 +3,13 @@ const cookieSession = require('cookie-session');
 const app = express();
 const PORT = 8080; // default port 8080
 
-const { getUserByEmail, hashPassword, validatePassword, generateRandomString } = require('./helpers');
+const {
+  isLoggedIn,
+  getUserByEmail,
+  hashPassword,
+  validatePassword,
+  generateRandomString
+} = require('./helpers');
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -29,23 +35,19 @@ const urlDatabase = {
     longURL: 'http://www.googler.ca',
     userID: 'hcjb66'
   }
-}
+};
 
 const users = {
   userRandomID: {
     id: 'userRandomID',
     email: 'user@example.com',
     hashedPassword: 'purple-monkey-dinosaur',
-  }, 
+  },
   hcjb66: {
     id: 'hcjb66',
     email: 'laurfaery@me.com',
     hashedPassword: '123',
   }
-};
-
-const isLoggedIn = (req) => {
-  return req.session.user_id;
 };
 
 const urlsForUser = (id) => {
@@ -73,13 +75,12 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const email = req.body.email;
+  const { email } = req.body;
   const hashedPassword = hashPassword(req.body.password);
   const myUser = getUserByEmail(email, users);
   if (myUser !== undefined) {
     // check password matches user password
     if (validatePassword(myUser, hashedPassword)) {
-      // res.cookie('userid', myUser.id); replaced with nexy ln
       req.session.user_id = myUser.id;
       res.redirect('/urls');
     } else {
@@ -104,7 +105,6 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  // res.clearCookie('userid'); replaced with next ln
   req.session = null;
   res.redirect('/urls');
 });
@@ -131,7 +131,6 @@ app.post('/register', (req, res) => {
       hashedPassword
     };
     users[newUserID] = user;
-    // res.cookie('userid', newUserID); replaced with next ln
     req.session.user_id = newUserID;
     res.redirect('/urls');
   } else {

@@ -2,6 +2,10 @@
 
 const bcrypt = require('bcryptjs');
 
+const isLoggedIn = (req) => {
+  return req.session.user_id;
+};
+
 const getUserByEmail = (val, users) => {
   const myUser = Object.values(users).filter((user) => {
     return user.email === val
@@ -11,7 +15,7 @@ const getUserByEmail = (val, users) => {
 
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, 10);
-}
+};
 
 const validatePassword = (user, hashedPassword) => {
   return bcrypt.compareSync(user['hashedPassword'], hashedPassword);
@@ -22,4 +26,10 @@ const generateRandomString = () => {
   return randomNum.substring(2, 8);
 };
 
-module.exports = { getUserByEmail, hashPassword, validatePassword, generateRandomString };
+module.exports = {
+  isLoggedIn,
+  getUserByEmail,
+  hashPassword,
+  validatePassword,
+  generateRandomString
+};
