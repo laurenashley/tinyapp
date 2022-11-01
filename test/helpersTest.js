@@ -23,9 +23,8 @@ describe('getUserByEmail', () => {
     assert.strictEqual(user.id, expectedUserID);
   });
 
-  it('should return undefined with email not in our database', () => {
+  it('should return undefined with non-existant email', () => {
     const user = getUserByEmail('laur@example.com', testUsers);
-    console.log('user returns undefined: ', user);
     assert.strictEqual(user, undefined);
   });
 });
