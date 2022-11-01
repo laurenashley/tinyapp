@@ -3,7 +3,7 @@
 const bcrypt = require('bcryptjs');
 
 const isLoggedIn = (req) => {
-  return req.session.user_id;
+    return req.session.user_id;
 };
 
 const getUserByEmail = (val, users) => {

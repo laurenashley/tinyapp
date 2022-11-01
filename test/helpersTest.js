@@ -1,7 +1,13 @@
 /* eslint-disable quote-props */
 const { assert } = require('chai');
 
-const { getUserByEmail } = require('../helpers');
+const {
+  isLoggedIn,
+  getUserByEmail,
+  hashPassword,
+  validatePassword,
+  generateRandomString
+} = require('../helpers');
 
 const testUsers = {
   'userRandomID': {
@@ -16,8 +22,14 @@ const testUsers = {
   }
 };
 
+const sessionCookie = {
+  session: {
+    user_id: 'user2RandomID'
+  }
+};
+
 describe('getUserByEmail', () => {
-  it('should return a user with valid email', () => {
+  it('should return the id of the user with valid email', () => {
     const user = getUserByEmail('user@example.com', testUsers);
     const expectedUserID = 'userRandomID';
     assert.strictEqual(user.id, expectedUserID);
@@ -26,5 +38,14 @@ describe('getUserByEmail', () => {
   it('should return undefined with non-existant email', () => {
     const user = getUserByEmail('laur@example.com', testUsers);
     assert.strictEqual(user, undefined);
+  });
+});
+
+describe('isLoggedIn', () => {
+  const userid = isLoggedIn(sessionCookie);
+  const expectedUserID = 'user2RandomID';
+
+  it('should return user ID if user is logged in', () => {
+    assert.strictEqual(userid, expectedUserID);
   });
 });
