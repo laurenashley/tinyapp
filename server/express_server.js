@@ -80,7 +80,7 @@ app.get('/u/:id', (req, res) => {
 app.get('/urls/new', (req, res) => {
   if (isLoggedIn(req)) {
     const myUser = users[req.session.user_id];
-    const templateVars = { user: myUser};
+    const templateVars = { user: myUser };
     res.render('urls_new', templateVars);
   } else {
     res.redirect('/login');
@@ -89,25 +89,23 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   const urlID = req.params.id;
+  const userid = req.session.user_id;
   if (isLoggedIn(req)) {
-    console.log(`${req.session.user_id} is logged in`);
     const urlOwner = '';
     // if this url does not belong to logged in user, tell them they do not have permission
     const notOwnedMessage = 'Oops! This short URL does not belong to you. Only the owner of this url can access this page';
-    if (urlDatabase[myID] !== undefined) { // To Do && urldb[userid] matches userid
-      const myURL = urlDatabase[myID].longURL;
+    if (urlDatabase[urlID] !== undefined && urlDatabase[urlID]['userID'] === userid) {
+      const myURL = urlDatabase[urlID].longURL;
       const templateVars = {
         id: urlID,
         longURL: myURL,
-        user: users[req.session.user_id]
+        user: users[userid],
       };
       res.render('urls_show', templateVars);
     } else {
-      console.log('ID not found');
       res.status(404).send(notOwnedMessage);
     }
   } else {
-    console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
 });
