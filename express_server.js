@@ -8,7 +8,8 @@ const {
   getUserByEmail,
   hashPassword,
   validatePassword,
-  generateRandomString
+  generateRandomString,
+  urlsForUser
 } = require('./helpers');
 
 app.set('view engine', 'ejs');
@@ -50,18 +51,6 @@ const users = {
   }
 };
 
-const urlsForUser = (id) => {
-  const entries = Object.entries(urlDatabase);
-  const myUrls = [];
-  // eslint-disable-next-line no-restricted-syntax
-  for (const obj of entries) {
-    if (obj[1].userID === id) {
-      myUrls.push(obj);
-    }
-  }
-  return myUrls;
-};
-
 const notLoggedInMessage = 'You must be registered and logged in to create a new short URL or to edit or delete them.';
 
 app.get('/', (req, res) => {
@@ -96,7 +85,7 @@ app.post('/login', (req, res) => {
 app.get('/urls', (req, res) => {
   const myid = req.session.user_id;
   const myUser = users[myid];
-  const myDB = isLoggedIn(req) ? urlsForUser(myUser.id) : urlDatabase;
+  const myDB = isLoggedIn(req) ? urlsForUser(myUser.id, urlDatabase) : urlDatabase;
   const templateVars = {
     urls: myDB, // Attn if anon user can view url list see const ln 112
     user: myUser
