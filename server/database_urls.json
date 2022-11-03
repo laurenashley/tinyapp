@@ -1,22 +1,18 @@
-// URL Database
-
-[
-  {
-    "b2xVn2": {
-      "longURL": "http://www.lighthouselabs.ca",
-      "userID": "userRandomID"
-    },
-    "9sm5xK": {
-      "longURL": "http://www.google.ca",
-      "userID": "userRandomID"
-    },
-    "9s34xK": {
-      "longURL": "http://www.hello.ca",
-      "userID": "hcjb66"
-    },
-    "85uu23": {
-      "longURL": "http://www.googler.ca",
-      "userID": "hcjb66"
-    }
+{
+  "b2xVn2": {
+    "longURL": "http://www.lighthouselabs.ca",
+    "userID": "userRandomID"
+  },
+  "9sm5xK": {
+    "longURL": "http://www.google.ca",
+    "userID": "userRandomID"
+  },
+  "9s34xK": {
+    "longURL": "http://www.hello.ca",
+    "userID": "hcjb66"
+  },
+  "85uu23": {
+    "longURL": "http://www.googler.ca",
+    "userID": "hcjb66"
   }
-]
+}
