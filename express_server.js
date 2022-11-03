@@ -19,10 +19,8 @@ app.use(cookieSession({
   keys: ['your-secret-key-goes-here', 'your-secret-key-goes-here']
 }));
 
-const urlDatabase = require('./server/database_urls.json');
-console.log('urldb ', urlDatabase);
-const users = require('./server/database_user.json');
-console.log('userdb ', users);
+const urlDatabase = require('./server/data_files/database_urls.json');
+const users = require('./server/data_files/database_user.json');
 
 // const urlDatabase = {
 //   'b2xVn2': {
