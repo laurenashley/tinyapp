@@ -9,14 +9,14 @@ const {
   hashPassword,
   validatePassword,
   generateRandomString,
-  urlsForUser
+  urlsForUser,
 } = require('./helpers');
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: 'session',
-  keys: ['your-secret-key-goes-here', 'your-secret-key-goes-here']
+  keys: ['your-secret-key-goes-here', 'your-secret-key-goes-here'],
 }));
 
 const urlDatabase = require('./data_files/database_urls.json');
@@ -42,7 +42,6 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/login', (req, res) => {
   const templateVars = { user: undefined }; // To Do get rid of this, template breaks without it
-
   isLoggedIn(req) ? res.redirect('/urls') : res.render('user_login', templateVars);
 });
 
@@ -51,8 +50,8 @@ app.get('/urls', (req, res) => {
   const myUser = users[myid];
   const myDB = isLoggedIn(req) ? urlsForUser(myUser.id, urlDatabase) : urlDatabase;
   const templateVars = {
-    urls: myDB, // Attn if anon user can view url list see const ln 112
-    user: myUser
+    urls: myDB,
+    user: myUser,
   };
   res.render('urls_index', templateVars);
 });
