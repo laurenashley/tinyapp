@@ -3,6 +3,7 @@ const cookieSession = require('cookie-session');
 const app = express();
 const PORT = 8080; // default port 8080
 
+// Import Helpers
 const {
   isLoggedIn,
   getUserByEmail,
@@ -10,6 +11,8 @@ const {
   validatePassword,
   generateRandomString,
   urlsForUser,
+  notLoggedInMessage,
+  notOwnedMessage,
 } = require('./helpers');
 
 app.set('view engine', 'ejs');
@@ -19,10 +22,9 @@ app.use(cookieSession({
   keys: ['your-secret-key-goes-here', 'your-secret-key-goes-here'],
 }));
 
+// Import database data
 const urlDatabase = require('./data_files/database_urls.json');
 const users = require('./data_files/database_user.json');
-
-const notLoggedInMessage = 'You must be registered and logged in to create a new short URL or to edit or delete them.';
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -91,7 +93,6 @@ app.get('/urls/:id', (req, res) => {
   if (isLoggedIn(req)) {
     const urlExists = urlDatabase[urlID] !== undefined;
     const isOwner = urlDatabase[urlID].userID === userid;
-    const notOwnedMessage = 'Oops! This short URL does not belong to you. Only the owner of this url can access this page';
     if (urlExists && isOwner) {
       const myURL = urlDatabase[urlID].longURL;
       const templateVars = {
