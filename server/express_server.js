@@ -88,22 +88,26 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
-  const myID = req.params.id;
+  const urlID = req.params.id;
   if (isLoggedIn(req)) {
-    if (urlDatabase[myID] !== undefined) {
+    console.log(`${req.session.user_id} is logged in`);
+    const urlOwner = '';
+    // if this url does not belong to logged in user, tell them they do not have permission
+    const notOwnedMessage = 'Oops! This short URL does not belong to you. Only the owner of this url can access this page';
+    if (urlDatabase[myID] !== undefined) { // To Do && urldb[userid] matches userid
       const myURL = urlDatabase[myID].longURL;
       const templateVars = {
-        id: myID,
+        id: urlID,
         longURL: myURL,
         user: users[req.session.user_id]
       };
       res.render('urls_show', templateVars);
     } else {
-      // console.log('ID not found');
-      res.status(404).send('Short URL id not found');
+      console.log('ID not found');
+      res.status(404).send(notOwnedMessage);
     }
   } else {
-    // console.log('Not logged in');
+    console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
 });
