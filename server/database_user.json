@@ -1,0 +1,16 @@
+// User Database
+
+[
+  {
+    "userRandomID": {
+      "id": "userRandomID",
+      "email": "user@example.com",
+      "hashedPassword": "purple-monkey-dinosaur",
+    },
+    "hcjb66": {
+      "id": "hcjb66",
+      "email": "laurfaery@me.com",
+      "hashedPassword": "123",
+    }
+  }
+]
