@@ -29,7 +29,7 @@ app.listen(PORT, () => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  isLoggedIn(req) ? res.redirect('/urls') : res.redirect('/login');
 });
 
 app.get('/hello', (req, res) => {
