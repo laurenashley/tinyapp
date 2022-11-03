@@ -72,7 +72,6 @@ app.get('/u/:id', (req, res) => {
     const { longURL } = urlDatabase[req.params.id];
     res.redirect(longURL);
   } else {
-    // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
 });
@@ -91,10 +90,10 @@ app.get('/urls/:id', (req, res) => {
   const urlID = req.params.id;
   const userid = req.session.user_id;
   if (isLoggedIn(req)) {
-    const urlOwner = '';
-    // if this url does not belong to logged in user, tell them they do not have permission
+    const urlExists = urlDatabase[urlID] !== undefined;
+    const isOwner = urlDatabase[urlID].userID === userid;
     const notOwnedMessage = 'Oops! This short URL does not belong to you. Only the owner of this url can access this page';
-    if (urlDatabase[urlID] !== undefined && urlDatabase[urlID]['userID'] === userid) {
+    if (urlExists && isOwner) {
       const myURL = urlDatabase[urlID].longURL;
       const templateVars = {
         id: urlID,
@@ -121,11 +120,9 @@ app.post('/login', (req, res) => {
       req.session.user_id = myUser.id;
       res.redirect('/urls');
     } else {
-      // console.log('Not logged in Forbidden');
       res.sendStatus(403);
     }
   } else {
-    // console.log('Not logged in Forbidden');
     res.sendStatus(403);
   }
 });
@@ -152,7 +149,6 @@ app.post('/register', (req, res) => {
     req.session.user_id = newUserID;
     res.redirect('/urls');
   } else {
-    // console.log('Not logged in Forbidden');
     res.sendStatus(404);
   }
 });
@@ -161,7 +157,6 @@ app.post('/register', (req, res) => {
 app.post('/urls', (req, res) => {
   if (!isLoggedIn(req)) {
     // user is not logged in, send message
-    // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   } else {
     const id = generateRandomString();
@@ -184,7 +179,6 @@ app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
     };
     res.redirect('/urls');
   } else {
-    // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
 });
@@ -196,7 +190,6 @@ app.post('/urls/:id/delete', (req, res) => {
     delete urlDatabase[id];
     res.redirect('/urls');
   } else {
-    // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
 });
