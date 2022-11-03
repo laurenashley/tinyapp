@@ -129,7 +129,10 @@ app.post('/login', (req, res) => {
 
 // Endpoint to logout user
 app.post('/logout', (req, res) => {
+  console.log('userDB before: ', users);
   req.session = null;
+  // How to persist new user data after logout?
+  console.log('userDB after: ', users);
   res.redirect('/urls');
 });
 
@@ -143,10 +146,11 @@ app.post('/register', (req, res) => {
     const user = {
       id: newUserID,
       email,
-      hashedPassword
+      hashedPassword,
     };
     users[newUserID] = user;
     req.session.user_id = newUserID;
+    // How to persist new user data after logout?
     res.redirect('/urls');
   } else {
     res.sendStatus(404);

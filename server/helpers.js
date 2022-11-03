@@ -25,7 +25,6 @@ const generateRandomString = () => {
 const urlsForUser = (id, db) => {
   const entries = Object.entries(db);
   const myUrls = [];
-  // eslint-disable-next-line no-restricted-syntax
   for (const obj of entries) {
     if (obj[1].userID === id) {
       myUrls.push(obj);
