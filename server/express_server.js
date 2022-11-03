@@ -19,40 +19,8 @@ app.use(cookieSession({
   keys: ['your-secret-key-goes-here', 'your-secret-key-goes-here']
 }));
 
-const urlDatabase = require('./server/data_files/database_urls.json');
-const users = require('./server/data_files/database_user.json');
-
-// const urlDatabase = {
-//   'b2xVn2': {
-//     longURL: 'http://www.lighthouselabs.ca',
-//     userID: 'userRandomID'
-//   },
-//   '9sm5xK': {
-//     longURL: 'http://www.google.ca',
-//     userID: 'userRandomID'
-//   },
-//   '9s34xK': {
-//     longURL: 'http://www.hello.ca',
-//     userID: 'hcjb66'
-//   },
-//   '85uu23': {
-//     longURL: 'http://www.googler.ca',
-//     userID: 'hcjb66'
-//   }
-// };
-
-// const users = {
-//   userRandomID: {
-//     id: 'userRandomID',
-//     email: 'user@example.com',
-//     hashedPassword: 'purple-monkey-dinosaur',
-//   },
-//   hcjb66: {
-//     id: 'hcjb66',
-//     email: 'laurfaery@me.com',
-//     hashedPassword: '123',
-//   }
-// };
+const urlDatabase = require('./data_files/database_urls.json');
+const users = require('./data_files/database_user.json');
 
 const notLoggedInMessage = 'You must be registered and logged in to create a new short URL or to edit or delete them.';
 
