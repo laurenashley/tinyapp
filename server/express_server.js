@@ -131,7 +131,7 @@ app.post('/login', (req, res) => {
 app.post('/logout', (req, res) => {
   console.log('userDB before: ', users);
   req.session = null;
-  // How to persist new user data after logout?
+  // To Do How to persist new user data after logout?
   console.log('userDB after: ', users);
   res.redirect('/urls');
 });
@@ -150,7 +150,7 @@ app.post('/register', (req, res) => {
     };
     users[newUserID] = user;
     req.session.user_id = newUserID;
-    // How to persist new user data after logout?
+    // To Do How to persist new user data after logout?
     res.redirect('/urls');
   } else {
     res.sendStatus(404);
@@ -166,7 +166,7 @@ app.post('/urls', (req, res) => {
     const id = generateRandomString();
     const newURL = {
       longURL: req.body.longURL,
-      userID: req.session.user_id
+      userID: req.session.user_id,
     };
     urlDatabase[id] = newURL;
     res.redirect(`/urls/${id}`);
