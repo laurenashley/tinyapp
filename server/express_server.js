@@ -24,14 +24,88 @@ const users = require('./data_files/database_user.json');
 
 const notLoggedInMessage = 'You must be registered and logged in to create a new short URL or to edit or delete them.';
 
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
 app.get('/', (req, res) => {
   res.send('Hello!');
+});
+
+app.get('/hello', (req, res) => {
+  res.send('<html><body>Hello <b>World</b></body></html>\n');
+});
+
+app.get('/urls.json', (req, res) => {
+  res.json(urlDatabase);
 });
 
 app.get('/login', (req, res) => {
   const templateVars = { user: undefined }; // To Do get rid of this, template breaks without it
 
   isLoggedIn(req) ? res.redirect('/urls') : res.render('user_login', templateVars);
+});
+
+app.get('/urls', (req, res) => {
+  const myid = req.session.user_id;
+  const myUser = users[myid];
+  const myDB = isLoggedIn(req) ? urlsForUser(myUser.id, urlDatabase) : urlDatabase;
+  const templateVars = {
+    urls: myDB, // Attn if anon user can view url list see const ln 112
+    user: myUser
+  };
+  res.render('urls_index', templateVars);
+});
+
+app.get('/register', (req, res) => {
+  if (isLoggedIn(req)) {
+    res.redirect('/urls');
+  } else {
+    const myUser = users[req.session.user_id];
+    const templateVars = { user: myUser };
+    res.render('user_registration', templateVars);
+  }
+});
+
+app.get('/u/:id', (req, res) => {
+  if (isLoggedIn(req)) {
+    const { longURL } = urlDatabase[req.params.id];
+    res.redirect(longURL);
+  } else {
+    // console.log('Not logged in');
+    res.status(403).send(notLoggedInMessage);
+  }
+});
+
+app.get('/urls/new', (req, res) => {
+  if (isLoggedIn(req)) {
+    const myUser = users[req.session.user_id];
+    const templateVars = { user: myUser};
+    res.render('urls_new', templateVars);
+  } else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/urls/:id', (req, res) => {
+  const myID = req.params.id;
+  if (isLoggedIn(req)) {
+    if (urlDatabase[myID] !== undefined) {
+      const myURL = urlDatabase[myID].longURL;
+      const templateVars = {
+        id: myID,
+        longURL: myURL,
+        user: users[req.session.user_id]
+      };
+      res.render('urls_show', templateVars);
+    } else {
+      // console.log('ID not found');
+      res.status(404).send('Short URL id not found');
+    }
+  } else {
+    // console.log('Not logged in');
+    res.status(403).send(notLoggedInMessage);
+  }
 });
 
 // Endpoint to login user using their email and password
@@ -54,31 +128,10 @@ app.post('/login', (req, res) => {
   }
 });
 
-app.get('/urls', (req, res) => {
-  const myid = req.session.user_id;
-  const myUser = users[myid];
-  const myDB = isLoggedIn(req) ? urlsForUser(myUser.id, urlDatabase) : urlDatabase;
-  const templateVars = {
-    urls: myDB, // Attn if anon user can view url list see const ln 112
-    user: myUser
-  };
-  res.render('urls_index', templateVars);
-});
-
 // Endpoint to logout user
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/urls');
-});
-
-app.get('/register', (req, res) => {
-  if (isLoggedIn(req)) {
-    res.redirect('/urls');
-  } else {
-    const myUser = users[req.session.user_id];
-    const templateVars = { user: myUser };
-    res.render('user_registration', templateVars);
-  }
 });
 
 // Endpoint to register user using their email and password
@@ -144,57 +197,4 @@ app.post('/urls/:id/delete', (req, res) => {
     // console.log('Not logged in');
     res.status(403).send(notLoggedInMessage);
   }
-});
-
-app.get('/u/:id', (req, res) => {
-  if (isLoggedIn(req)) {
-    const { longURL } = urlDatabase[req.params.id];
-    res.redirect(longURL);
-  } else {
-    // console.log('Not logged in');
-    res.status(403).send(notLoggedInMessage);
-  }
-});
-
-app.get('/urls/new', (req, res) => {
-  if (isLoggedIn(req)) {
-    const myUser = users[req.session.user_id];
-    const templateVars = { user: myUser};
-    res.render('urls_new', templateVars);
-  } else {
-    res.redirect('/login');
-  }
-});
-
-app.get('/urls/:id', (req, res) => {
-  const myID = req.params.id;
-  if (isLoggedIn(req)) {
-    if (urlDatabase[myID] !== undefined) {
-      const myURL = urlDatabase[myID].longURL;
-      const templateVars = {
-        id: myID,
-        longURL: myURL,
-        user: users[req.session.user_id]
-      };
-      res.render('urls_show', templateVars);
-    } else {
-      // console.log('ID not found');
-      res.status(404).send('Short URL id not found');
-    }
-  } else {
-    // console.log('Not logged in');
-    res.status(403).send(notLoggedInMessage);
-  }
-});
-
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get('/hello', (req, res) => {
-  res.send('<html><body>Hello <b>World</b></body></html>\n');
-});
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
 });
