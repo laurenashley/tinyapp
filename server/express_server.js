@@ -114,19 +114,17 @@ app.get('/urls/:id', (req, res) => {
 app.post('/login', (req, res) => {
   console.log('login user DB ', users);
   const { email } = req.body;
-  const hashedPassword = hashPassword(req.body.password);
+  const password = req.body.password;
   const myUser = getUserByEmail(email, users);
   if (myUser !== undefined) {
     // check password matches user password
-    if (validatePassword(myUser, hashedPassword)) {
+    if (validatePassword(myUser, password)) {
       req.session.user_id = myUser.id;
       res.redirect('/urls');
     } else {
-      console.log('password invalid');
       res.status(403).send('The password entered is invalid');
     }
   } else {
-    console.log('user undefined');
     res.status(403).send('User does not exist');
   }
 });

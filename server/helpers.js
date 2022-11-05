@@ -15,7 +15,7 @@ const hashPassword = (password) => { return bcrypt.hashSync(password, 10) };
 
 const validatePassword = (user, hashedPassword) => {
   console.log(user, hashedPassword);
-  return bcrypt.compareSync(user.hashedPassword, hashedPassword);
+  return bcrypt.compareSync(hashedPassword, user.hashedPassword);
 };
 
 const generateRandomString = () => {
