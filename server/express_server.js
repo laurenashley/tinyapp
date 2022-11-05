@@ -112,9 +112,8 @@ app.get('/urls/:id', (req, res) => {
 
 // Endpoint to login user using their email and password
 app.post('/login', (req, res) => {
-  console.log('login user DB ', users);
   const { email } = req.body;
-  const password = req.body.password;
+  const { password } = req.body;
   const myUser = getUserByEmail(email, users);
   if (myUser !== undefined) {
     // check password matches user password

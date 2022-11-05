@@ -14,7 +14,6 @@ const getUserByEmail = (val, users) => {
 const hashPassword = (password) => { return bcrypt.hashSync(password, 10) };
 
 const validatePassword = (user, hashedPassword) => {
-  console.log(user, hashedPassword);
   return bcrypt.compareSync(hashedPassword, user.hashedPassword);
 };
 
