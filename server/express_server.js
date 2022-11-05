@@ -174,9 +174,9 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:id/edit', (req, res) => { // To Do make sure url get updated
   if (isLoggedIn(req)) {
     const { id } = req.params;
-    urlDatabase[id] = { 
+    urlDatabase[id] = {
       longURL: req.body.newURL,
-      userID: req.session.user_id
+      userID: req.session.user_id,
     };
     res.redirect('/urls');
   } else {
