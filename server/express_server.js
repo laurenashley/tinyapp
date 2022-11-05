@@ -48,7 +48,6 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  console.log('req body ', req.body, res.body);
   const myid = req.session.user_id;
   const myUser = users[myid];
   const myDB = isLoggedIn(req) ? urlsForUser(myUser.id, urlDatabase) : urlDatabase;
