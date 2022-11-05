@@ -48,6 +48,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  console.log('req body ', req.body, res.body);
   const myid = req.session.user_id;
   const myUser = users[myid];
   const myDB = isLoggedIn(req) ? urlsForUser(myUser.id, urlDatabase) : urlDatabase;
@@ -111,6 +112,7 @@ app.get('/urls/:id', (req, res) => {
 
 // Endpoint to login user using their email and password
 app.post('/login', (req, res) => {
+  console.log('login user DB ', users);
   const { email } = req.body;
   const hashedPassword = hashPassword(req.body.password);
   const myUser = getUserByEmail(email, users);
@@ -120,19 +122,18 @@ app.post('/login', (req, res) => {
       req.session.user_id = myUser.id;
       res.redirect('/urls');
     } else {
-      res.sendStatus(403);
+      console.log('password invalid');
+      res.status(403).send('The password entered is invalid');
     }
   } else {
-    res.sendStatus(403);
+    console.log('user undefined');
+    res.status(403).send('User does not exist');
   }
 });
 
 // Endpoint to logout user
 app.post('/logout', (req, res) => {
-  console.log('userDB before: ', users);
   req.session = null;
-  // To Do How to persist new user data after logout?
-  console.log('userDB after: ', users);
   res.redirect('/urls');
 });
 
