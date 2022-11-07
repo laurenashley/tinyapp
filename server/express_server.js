@@ -69,12 +69,8 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/u/:id', (req, res) => {
-  if (isLoggedIn(req)) {
-    const { longURL } = urlDatabase[req.params.id];
-    res.redirect(longURL);
-  } else {
-    res.status(403).send(notLoggedInMessage);
-  }
+  const { longURL } = urlDatabase[req.params.id];
+  res.redirect(longURL);
 });
 
 app.get('/urls/new', (req, res) => {
